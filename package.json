@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/oltur/sms-server#readme",
   "dependencies": {
+    "moment": "^2.19.3",
     "mongodb": "^2.2.0",
     "restify": "^6.3.4"
   }

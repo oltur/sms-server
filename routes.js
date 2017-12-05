@@ -1,18 +1,46 @@
 'use strict'
 
-module.exports = function(ctx) {
+var moment = require('moment');
+
+module.exports = function (ctx) {
 
     // extract context from passed in object
-    const db     = ctx.db,
-          server = ctx.server
+    const db = ctx.db,
+        server = ctx.server
 
     // assign collection to variable for further use
-    const collection = db.collection('data')
+    const collection = db.collection('sms')
+
+    server.post('/import', (req, res, next) => {
+
+        req.body.forEach((elem) => {
+
+            // extract data from body and add timestamps
+            const data = Object.assign({}, elem, {
+                created: new Date(),
+                updated: new Date()
+            })
+
+            let day = moment.utc(data.start_date, "MM/DD/YYYY");
+            data.start_date = day.toDate();
+
+            day = moment.utc(data.end_date, "MM/DD/YYYY");
+            data.end_date = day.toDate();
+
+            // insert one object into data collection
+            collection.insertOne(data)
+                .then(doc => res.send(200, doc.ops[0]))
+                .catch(err => res.send(500, err))
+        });
+
+        next()
+
+    })
 
     /**
      * Create
      */
-    server.post('/data', (req, res, next) => {
+    server.post('/sms', (req, res, next) => {
 
         // extract data from body and add timestamps
         const data = Object.assign({}, req.body, {
@@ -32,10 +60,10 @@ module.exports = function(ctx) {
     /**
      * Read
      */
-    server.get('/data', (req, res, next) => {
+    server.get('/sms', (req, res, next) => {
 
         let limit = parseInt(req.query.limit, 10) || 10, // default limit to 10 docs
-            skip  = parseInt(req.query.skip, 10) || 0, // default skip to 0 docs
+            skip = parseInt(req.query.skip, 10) || 0, // default skip to 0 docs
             query = req.query || {}
 
         // remove skip and limit from query to avoid false querying
@@ -54,7 +82,7 @@ module.exports = function(ctx) {
     /**
      * Update
      */
-    server.put('/data/:id', (req, res, next) => {
+    server.put('/sms/:id', (req, res, next) => {
 
         // extract data from body and add timestamps
         const data = Object.assign({}, req.body, {
@@ -62,9 +90,13 @@ module.exports = function(ctx) {
         })
 
         // build out findOneAndUpdate variables to keep things organized
-        let query = { _id: req.params.id },
-            body  = { $set: data },
-            opts  = {
+        let query = {
+                _id: req.params.id
+            },
+            body = {
+                $set: data
+            },
+            opts = {
                 returnOriginal: false,
                 upsert: true
             }
@@ -81,10 +113,12 @@ module.exports = function(ctx) {
     /**
      * Delete
      */
-    server.del('/data/:id', (req, res, next) => {
+    server.del('/sms/:id', (req, res, next) => {
 
         // remove one document based on passed in id (via route)
-        collection.findOneAndDelete({ _id: req.params.id })
+        collection.findOneAndDelete({
+                _id: req.params.id
+            })
             .then(doc => res.send(204))
             .catch(err => res.send(500, err))
 
