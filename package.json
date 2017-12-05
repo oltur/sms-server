@@ -1,0 +1,23 @@
+{
+  "name": "sms-server",
+  "version": "1.0.0",
+  "description": "Server-side for Sms Challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oltur/sms-server.git"
+  },
+  "author": "Alex Turevski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oltur/sms-server/issues"
+  },
+  "homepage": "https://github.com/oltur/sms-server#readme",
+  "dependencies": {
+    "mongodb": "^3.0.0-rc0",
+    "restify": "^6.3.4"
+  }
+}
