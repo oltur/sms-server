@@ -11,6 +11,9 @@ module.exports = function (ctx) {
     // assign collection to variable for further use
     const collection = db.collection('sms')
 
+    /**
+     * Import data
+     */
     server.post('/import', (req, res, next) => {
 
         req.body.forEach((elem) => {
@@ -59,6 +62,7 @@ module.exports = function (ctx) {
 
     /**
      * Read
+     * Example: http://localhost:3000/sms?limit=100&$where=this.start_date>=ISODate('2014-01-01')%26%26this.end_date<=ISODate('2015-01-01')
      */
     server.get('/sms', (req, res, next) => {
 
