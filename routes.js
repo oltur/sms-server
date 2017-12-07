@@ -16,29 +16,28 @@ module.exports = function (ctx) {
      */
     server.post('/import', (req, res, next) => {
 
+        let data = [];
         req.body.forEach((elem) => {
 
             // extract data from body and add timestamps
-            const data = Object.assign({}, elem, {
+            const dataItem = Object.assign({}, elem, {
                 created: new Date(),
                 updated: new Date()
             })
 
-            let day = moment.utc(data.start_date, "MM/DD/YYYY");
-            data.start_date = day.toDate();
+            let day = moment.utc(dataItem.start_date, "MM/DD/YYYY");
+            dataItem.start_date = day.toDate();
 
-            day = moment.utc(data.end_date, "MM/DD/YYYY");
-            data.end_date = day.toDate();
+            day = moment.utc(dataItem.end_date, "MM/DD/YYYY");
+            dataItem.end_date = day.toDate();
 
-            // insert one object into data collection
-            collection.insertOne(data)
-                .then(doc => res.send(200, doc.ops[0]))
-                .catch(err => res.send(500, err))
+            data.push(dataItem);
         });
-
-        next()
-
-    })
+        collection.insertMany(data)
+            .then(doc => res.send(200, "OK"))
+            .catch(err => res.send(500, err))
+            .then(() => next());
+    });
 
     /**
      * Create
@@ -62,20 +61,27 @@ module.exports = function (ctx) {
 
     /**
      * Read
-     * Example: http://localhost:3000/sms?limit=100&$where=this.start_date>=ISODate('2014-01-01')%26%26this.end_date<=ISODate('2015-01-01')
+     * Example: http://localhost:3000/sms?skip=0&limit=1000&$where=this.end_date>=ISODate('2014-01-01')%26%26this.start_date<=ISODate('2015-01-01')%26%26this.start_date<=this.end_date
      */
     server.get('/sms', (req, res, next) => {
 
         let limit = parseInt(req.query.limit, 10) || 10, // default limit to 10 docs
             skip = parseInt(req.query.skip, 10) || 0, // default skip to 0 docs
+            sortKey = req.query.sortKey,
+            sortOrder = req.query.sortOrder,
             query = req.query || {}
 
         // remove skip and limit from query to avoid false querying
         delete query.skip
         delete query.limit
+        delete query.sortKey;
+        delete query.sortOrder;
 
+        const sort = {};
+        sort[sortKey] = sortOrder === 'asc' ? 1 : -1,
         // find data and convert to array (with optional query, skip and limit)
-        collection.find(query).skip(skip).limit(limit).toArray()
+        collection.find(query).sort(sort)
+            .skip(skip).limit(limit).toArray()
             .then(docs => res.send(200, docs))
             .catch(err => res.send(500, err))
 

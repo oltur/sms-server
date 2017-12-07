@@ -1,5 +1,11 @@
 'use strict'
 
+  var env = require('node-env-file');
+ 
+  // Load any undefined ENV variables form a specified file. 
+  env(__dirname + '/.env');
+
+
 /**
  * Module Dependencies
  */
@@ -18,6 +24,13 @@ const server = restify.createServer({
 /**
  * Bundled Plugins (http://restify.com/#bundled-plugins)
  */
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
 server.use(restify.plugins.jsonBodyParser({ mapParams: true }))
 server.use(restify.plugins.acceptParser(server.acceptable))
 server.use(restify.plugins.queryParser({ mapParams: true }))
