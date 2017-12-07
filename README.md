@@ -1,7 +1,8 @@
 # Back-end for Sms Challenge.
 
 Uses Mongo DB at Mlab.com
-Please specify CONNECTION_STRING envvariable either in system or .env file in root folder.
+
+Please specify CONNECTION_STRING environment variable either in system or .env file in root folder.
 
 Deployed at http://turevski.com:3000/sms
 
