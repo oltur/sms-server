@@ -15,8 +15,6 @@ module.exports = function (ctx) {
      * Import data
      */
     server.post('/import', (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
         let data = [];
         req.body.forEach((elem) => {
@@ -45,8 +43,6 @@ module.exports = function (ctx) {
      * Create
      */
     server.post('/sms', (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
         // extract data from body and add timestamps
         const data = Object.assign({}, req.body, {
@@ -65,11 +61,9 @@ module.exports = function (ctx) {
 
     /**
      * Read
-     * Example: http://localhost:3000/sms?skip=0&limit=1000&$where=this.end_date>=ISODate('2014-01-01')%26%26this.start_date<=ISODate('2015-01-01')%26%26this.start_date<=this.end_date
+     * Example: http://localhost:3000/sms?sortKey=city&sortOrder=asc&skip=0&limit=1000&$where=this.end_date>=ISODate('2014-01-01')%26%26this.start_date<=ISODate('2015-01-01')%26%26this.start_date<=this.end_date
      */
     server.get('/sms', (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
         let limit = parseInt(req.query.limit, 10) || 10, // default limit to 10 docs
             skip = parseInt(req.query.skip, 10) || 0, // default skip to 0 docs
@@ -99,8 +93,6 @@ module.exports = function (ctx) {
      * Update
      */
     server.put('/sms/:id', (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
         // extract data from body and add timestamps
         const data = Object.assign({}, req.body, {
@@ -132,8 +124,6 @@ module.exports = function (ctx) {
      * Delete
      */
     server.del('/sms/:id', (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
         // remove one document based on passed in id (via route)
         collection.findOneAndDelete({
